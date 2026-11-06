@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Semana 2 · Regresión y generalización</title>
+<meta name="description" content="Simuladores de la semana 2: mínimos cuadrados y métricas de error, descenso de gradiente, complejidad y regularización.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Instrument+Sans:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link rel="stylesheet" href="../assets/estilo.css">
+</head>
+<body>
+
+<header class="barra">
+  <div class="contenedor">
+    <a class="marca" href="../">Machine Learning <span>· Analítica de Datos</span></a>
+    <nav aria-label="Semanas disponibles">
+      <a href="../semana01/">Semana 1</a>
+      <a href="./" aria-current="page">Semana 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="encabezado-semana">
+    <div class="contenedor">
+      <p class="rotulo">Semana 2</p>
+      <h1>Regresión y generalización</h1>
+      <p class="bajada">Un modelo de regresión elige los parámetros que hacen más pequeño el error. Estos simuladores muestran qué significa «más pequeño», cómo se llega a ese mínimo paso a paso y por qué el modelo que mejor se ajusta a los datos conocidos no siempre es el que mejor predice.</p>
+      <nav class="indice" aria-label="Contenido de la semana">
+        <strong>Simuladores</strong>
+        <ol>
+          <li><a href="#minimos">Mínimos cuadrados y métricas de error</a></li>
+          <li><a href="#gradiente">Descenso de gradiente</a></li>
+          <li><a href="#complejidad">Complejidad y regularización</a></li>
+        </ol>
+      </nav>
+      <div class="material">
+        <a class="boton-colab" data-cuaderno="semana02/clase02_demo_regresion.ipynb" href="#">Abrir el cuaderno de clase en Colab</a>
+        <a class="boton-colab" data-cuaderno="semana02/clase02_practica.ipynb" href="#">Abrir la práctica en Colab</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Simulador 1 ───────────────────────── -->
+  <section class="simulador" id="minimos" aria-labelledby="t-minimos">
+    <div class="contenedor">
+      <div class="concepto">
+        <p class="numero">Simulador 1</p>
+        <h2 id="t-minimos">Mínimos cuadrados y métricas de error</h2>
+        <p>La regresión lineal simple describe el valor esperado de \(y\) como una recta:</p>
+        <p>$$\hat{y} = \beta_0 + \beta_1 x$$</p>
+        <p>Cada <strong>residuo</strong> \(e_i = y_i - \hat{y}_i\) es la distancia vertical entre un punto y la recta. El método de <strong>mínimos cuadrados</strong> elige \(\beta_0\) y \(\beta_1\) que minimizan el error cuadrático medio:</p>
+        <p>$$\mathrm{ECM} = \frac{1}{n}\sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$</p>
+        <p>$$R^2 = 1 - \frac{\sum_i (y_i - \hat{y}_i)^2}{\sum_i (y_i - \bar{y})^2}$$</p>
+        <table class="simbolos">
+          <thead><tr><th>Símbolo</th><th>Significado</th></tr></thead>
+          <tbody>
+            <tr><td>\(\beta_0\)</td><td>Intercepto: valor de \(\hat{y}\) cuando \(x = 0\).</td></tr>
+            <tr><td>\(\beta_1\)</td><td>Pendiente: cambio en \(\hat{y}\) por cada unidad de \(x\).</td></tr>
+            <tr><td>\(\mathrm{MAE}\), \(\mathrm{RMSE}\)</td><td>Error absoluto medio y raíz del ECM, en las unidades de \(y\).</td></tr>
+            <tr><td>\(R^2\)</td><td>Proporción de la variabilidad de \(y\) explicada por el modelo.</td></tr>
+          </tbody>
+        </table>
+        <p>Ejemplo: ventas mensuales según inversión publicitaria (millones), los mismos ocho meses de la clase.</p>
+        <div class="explorar">
+          <h3>Para explorar</h3>
+          <ol>
+            <li>Mueva los controles hasta lograr el menor ECM que pueda. Luego compare con el botón de mínimos cuadrados.</li>
+            <li>Active los cuadrados: ¿qué residuo pesa más en el ECM? ¿Pesa igual en el MAE?</li>
+            <li>Arrastre un punto muy lejos de la recta. ¿Qué métrica cambia más, MAE o RMSE?</li>
+          </ol>
+        </div>
+      </div>
+
+      <figure class="panel" style="margin:0">
+        <canvas id="c-minimos" class="interactivo" aria-label="Diagrama de dispersión con una recta ajustable y sus residuos"></canvas>
+        <figcaption class="leyenda-figura"><strong>Figura 1.</strong> Los segmentos ámbar son los residuos de la recta elegida. Haga clic para agregar un punto o arrástrelo para moverlo.</figcaption>
+        <div class="controles">
+          <div class="control">
+            <label for="m-b0"><span>Intercepto \(\beta_0\)</span> <output for="m-b0"></output></label>
+            <input type="range" id="m-b0" min="-2" max="7" step="0.05" value="4">
+          </div>
+          <div class="control">
+            <label for="m-b1"><span>Pendiente \(\beta_1\)</span> <output for="m-b1"></output></label>
+            <input type="range" id="m-b1" min="-0.5" max="2.5" step="0.01" value="0.5">
+          </div>
+          <label class="casilla"><input type="checkbox" id="m-cuadrados"> Dibujar los cuadrados de los residuos</label>
+          <div class="botones">
+            <button type="button" class="principal" id="m-ajustar">Ajustar por mínimos cuadrados</button>
+            <button type="button" id="m-datos">Restablecer datos</button>
+          </div>
+        </div>
+        <div class="lecturas" aria-live="polite">
+          <div class="lectura ambar"><span class="nombre">ECM</span><span class="valor" id="m-ecm">—</span></div>
+          <div class="lectura"><span class="nombre">MAE</span><span class="valor" id="m-mae">—</span></div>
+          <div class="lectura"><span class="nombre">RMSE</span><span class="valor" id="m-rmse">—</span></div>
+          <div class="lectura teal"><span class="nombre">R²</span><span class="valor" id="m-r2">—</span></div>
+          <div class="lectura violeta"><span class="nombre">ECM mínimo posible</span><span class="valor" id="m-min">—</span></div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Simulador 2 ───────────────────────── -->
+  <section class="simulador" id="gradiente" aria-labelledby="t-gradiente">
+    <div class="contenedor">
+      <div class="concepto">
+        <p class="numero">Simulador 2</p>
+        <h2 id="t-gradiente">Descenso de gradiente</h2>
+        <p>Cuando no hay una fórmula directa para el mínimo, se avanza por pasos: el parámetro se corrige en la dirección en que el error disminuye.</p>
+        <p>$$\beta \;\leftarrow\; \beta - \eta\,\frac{\partial J}{\partial \beta}$$</p>
+        <table class="simbolos">
+          <thead><tr><th>Símbolo</th><th>Significado</th></tr></thead>
+          <tbody>
+            <tr><td>\(J(\beta)\)</td><td>Función de error que se minimiza.</td></tr>
+            <tr><td>\(\partial J / \partial \beta\)</td><td>Pendiente de la curva de error en el punto actual.</td></tr>
+            <tr><td>\(\eta\)</td><td>Tasa de aprendizaje: tamaño de cada paso.</td></tr>
+          </tbody>
+        </table>
+        <p>En el simulador, \(J(\beta) = (\beta - 3)^2 + 1\), cuyo mínimo está en \(\beta = 3\). Su pendiente es \(2(\beta - 3)\), así que cada paso multiplica la distancia al mínimo por \((1 - 2\eta)\).</p>
+        <div class="explorar">
+          <h3>Para explorar</h3>
+          <ol>
+            <li>Con \(\eta = 0{,}05\), ¿cuántos pasos hacen falta para quedar a menos de 0,1 del mínimo?</li>
+            <li>¿Qué ocurre con \(\eta = 0{,}9\)? ¿Y con \(\eta = 1{,}02\)? Relacione lo que ve con el factor \((1 - 2\eta)\).</li>
+            <li>¿Hay algún valor de \(\eta\) que llegue al mínimo en un solo paso?</li>
+          </ol>
+        </div>
+      </div>
+
+      <figure class="panel" style="margin:0">
+        <canvas id="c-gradiente" aria-label="Curva de error con la trayectoria del descenso de gradiente"></canvas>
+        <canvas id="c-trayectoria" class="bajo" aria-label="Valor del parámetro en cada iteración" style="margin-top:8px"></canvas>
+        <figcaption class="leyenda-figura"><strong>Figura 2.</strong> Arriba, la curva de error y los pasos dados; la recta discontinua es la pendiente en el punto actual. Abajo, el valor de \(\beta\) en cada iteración.</figcaption>
+        <div class="controles">
+          <div class="control">
+            <label for="g-eta"><span>Tasa de aprendizaje \(\eta\)</span> <output for="g-eta"></output></label>
+            <input type="range" id="g-eta" min="0.01" max="1.05" step="0.01" value="0.15">
+          </div>
+          <div class="control">
+            <label for="g-inicio"><span>Valor inicial de \(\beta\)</span> <output for="g-inicio"></output></label>
+            <input type="range" id="g-inicio" min="-1.5" max="7.5" step="0.1" value="7">
+          </div>
+          <div class="botones">
+            <button type="button" class="principal" id="g-paso">Dar un paso</button>
+            <button type="button" id="g-diez">Dar 10 pasos</button>
+            <button type="button" id="g-reiniciar">Reiniciar</button>
+          </div>
+        </div>
+        <div class="lecturas" aria-live="polite">
+          <div class="lectura"><span class="nombre">Iteración</span><span class="valor" id="g-iter">0</span></div>
+          <div class="lectura teal"><span class="nombre">β actual</span><span class="valor" id="g-beta">—</span></div>
+          <div class="lectura ambar"><span class="nombre">J(β)</span><span class="valor" id="g-j">—</span></div>
+          <div class="lectura"><span class="nombre">Pendiente</span><span class="valor" id="g-pend">—</span></div>
+          <div class="lectura violeta"><span class="nombre">Factor 1 − 2η</span><span class="valor" id="g-factor">—</span></div>
+        </div>
+        <p class="nota-viva" id="g-nota"></p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Simulador 3 ───────────────────────── -->
+  <section class="simulador" id="complejidad" aria-labelledby="t-complejidad">
+    <div class="contenedor">
+      <div class="concepto">
+        <p class="numero">Simulador 3</p>
+        <h2 id="t-complejidad">Complejidad y regularización</h2>
+        <p>Un modelo lineal representa curvas si se agregan potencias de \(x\) como variables: \(\hat{y} = \beta_0 + \beta_1 x + \beta_2 x^2 + \dots + \beta_d x^d\). Al subir el grado \(d\) el error en los datos de entrenamiento siempre baja, pero el modelo puede empezar a seguir el ruido: es el <strong>sobreajuste</strong>.</p>
+        <p>La regresión <strong>ridge</strong> penaliza los coeficientes grandes, que son los que permiten esas oscilaciones:</p>
+        <p>$$J(\boldsymbol{\beta}) = \frac{1}{n}\sum_{i=1}^{n} (y_i - \hat{y}_i)^2 \;+\; \lambda \sum_{j=1}^{d} \beta_j^2$$</p>
+        <table class="simbolos">
+          <thead><tr><th>Símbolo</th><th>Significado</th></tr></thead>
+          <tbody>
+            <tr><td>\(d\)</td><td>Grado del polinomio: complejidad del modelo.</td></tr>
+            <tr><td>\(\lambda\)</td><td>Intensidad de la regularización. \(\lambda = 0\): regresión ordinaria.</td></tr>
+            <tr><td>RMSE en datos nuevos</td><td>Error sobre 200 observaciones que el modelo no vio: estima la generalización.</td></tr>
+          </tbody>
+        </table>
+        <div class="explorar">
+          <h3>Para explorar</h3>
+          <ol>
+            <li>Sin regularización, ¿qué grado da el menor RMSE en datos nuevos? ¿Coincide con el de menor RMSE de entrenamiento?</li>
+            <li>Con grado 15, aumente \(\lambda\) poco a poco. ¿Qué le pasa a la curva y a las dos métricas?</li>
+            <li>¿Qué ocurre con \(\lambda\) muy grande, aunque el grado sea alto?</li>
+          </ol>
+        </div>
+      </div>
+
+      <figure class="panel" style="margin:0">
+        <canvas id="c-complejidad" aria-label="Datos con ruido y el polinomio ajustado"></canvas>
+        <canvas id="c-curvas" class="bajo" aria-label="Error de entrenamiento y en datos nuevos según el grado" style="margin-top:8px"></canvas>
+        <figcaption class="leyenda-figura"><strong>Figura 3.</strong> Arriba, 18 datos sintéticos generados a partir de la curva gris discontinua más ruido, y el polinomio ajustado. Abajo, el RMSE según el grado para el \(\lambda\) elegido; el punto marca el grado actual.</figcaption>
+        <div class="controles">
+          <div class="control">
+            <label for="c-grado"><span>Grado del polinomio \(d\)</span> <output for="c-grado"></output></label>
+            <input type="range" id="c-grado" min="1" max="15" step="1" value="3">
+          </div>
+          <div class="control">
+            <label for="c-lambda"><span>Regularización \(\lambda\)</span> <output for="c-lambda"></output></label>
+            <input type="range" id="c-lambda" min="-8" max="1" step="0.1" value="-8">
+          </div>
+        </div>
+        <div class="lecturas" aria-live="polite">
+          <div class="lectura teal"><span class="nombre">RMSE entrenamiento</span><span class="valor" id="c-rtr">—</span></div>
+          <div class="lectura ambar"><span class="nombre">RMSE datos nuevos</span><span class="valor" id="c-rte">—</span></div>
+          <div class="lectura violeta"><span class="nombre">Mejor grado (datos nuevos)</span><span class="valor" id="c-mejor">—</span></div>
+        </div>
+        <p class="nota-viva" id="c-nota"></p>
+      </figure>
+    </div>
+  </section>
+
+  <section class="referencias" aria-labelledby="t-ref">
+    <div class="contenedor">
+      <h2 id="t-ref">Referencias</h2>
+      <ol>
+        <li>G. James, D. Witten, T. Hastie, R. Tibshirani y J. Taylor. <em>An Introduction to Statistical Learning with Applications in Python</em>. Springer, 2023.</li>
+        <li>T. Hastie, R. Tibshirani y J. Friedman. <em>The Elements of Statistical Learning</em>, 2.ª ed. Springer, 2009.</li>
+        <li>I. Goodfellow, Y. Bengio y A. Courville. <em>Deep Learning</em>. MIT Press, 2016.</li>
+        <li>A. E. Hoerl y R. W. Kennard. Ridge regression: Biased estimation for nonorthogonal problems. <em>Technometrics</em>, 12(1):55–67, 1970.</li>
+        <li>R. K. Pace y R. Barry. Sparse spatial autoregressions. <em>Statistics &amp; Probability Letters</em>, 33(3):291–297, 1997.</li>
+      </ol>
+      <div class="navegacion-semanas">
+        <a href="../semana01/">Semana 1: Análisis exploratorio</a>
+        <a href="../">Volver al inicio</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="pie-sitio">
+  <div class="contenedor">Curso de Machine Learning · Especialización en Analítica de Datos · Dr. Oscar Loyola Valenzuela</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script src="../assets/config.js"></script>
+<script src="../assets/grafico.js"></script>
+<script src="../assets/estadistica.js"></script>
+<script src="simuladores.js"></script>
+</body>
+</html>

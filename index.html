@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Machine Learning · Simuladores del curso</title>
+<meta name="description" content="Simuladores interactivos, semana a semana, del curso de Machine Learning de la Especialización en Analítica de Datos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Instrument+Sans:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/estilo.css">
+</head>
+<body>
+
+<header class="barra">
+  <div class="contenedor">
+    <a class="marca" href="./">Machine Learning <span>· Analítica de Datos</span></a>
+    <nav aria-label="Semanas disponibles">
+      <a href="semana01/">Semana 1</a>
+      <a href="semana02/">Semana 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="portada">
+    <div class="contenedor">
+      <div>
+        <p class="programa">Especialización en Analítica de Datos · Corporación Universitaria Americana</p>
+        <h1>Machine Learning, para verlo moverse</h1>
+        <p class="bajada">Cada semana encontrará aquí simuladores que muestran, con sus propias manos, las ideas vistas en clase: mueva un control, observe qué cambia en el gráfico y en los números, y compruebe si su intuición era correcta.</p>
+        <p class="bajada">Pruebe a la derecha: haga clic para agregar puntos y arrástrelos. La recta de mínimos cuadrados se recalcula en cada movimiento.</p>
+      </div>
+      <figure class="lienzo-portada" style="margin:0">
+        <canvas id="lienzoPortada" aria-label="Gráfico interactivo: haga clic para agregar puntos; la recta de regresión se ajusta automáticamente"></canvas>
+        <figcaption class="pie">
+          <span class="ecuacion-viva" id="ecuacionPortada">ŷ = —</span>
+          <span><span id="nPortada">0</span> puntos · <button type="button" id="limpiarPortada">Borrar puntos</button></span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="semanas" aria-labelledby="titulo-semanas">
+    <div class="contenedor">
+      <h2 id="titulo-semanas">Las ocho semanas del curso</h2>
+      <p>Cada semana usa un conjunto de datos distinto. Los simuladores se publican después de cada clase.</p>
+      <ol class="linea-tiempo">
+        <li>
+          <span class="numero-semana">1</span>
+          <div>
+            <h3><a href="semana01/">Fundamentos y análisis exploratorio</a></h3>
+            <p>Valores faltantes, atípicos, medidas de resumen, formas de una distribución, correlación y la paradoja de Simpson. Datos: pingüinos de Palmer.</p>
+          </div>
+          <span class="estado"><a href="semana01/">Abrir simuladores</a></span>
+        </li>
+        <li>
+          <span class="numero-semana">2</span>
+          <div>
+            <h3><a href="semana02/">Regresión y generalización</a></h3>
+            <p>Mínimos cuadrados, métricas de error, descenso de gradiente, sobreajuste y regularización. Datos: viviendas de California.</p>
+          </div>
+          <span class="estado"><a href="semana02/">Abrir simuladores</a></span>
+        </li>
+        <li class="pendiente">
+          <span class="numero-semana">3</span>
+          <div>
+            <h3>Clasificación y métricas</h3>
+            <p>Regresión logística, matriz de confusión, umbral de decisión y curvas ROC. Datos: campaña de marketing bancario.</p>
+          </div>
+          <span class="estado">Próximamente</span>
+        </li>
+        <li class="pendiente">
+          <span class="numero-semana">4</span>
+          <div>
+            <h3>Árboles y ensambles</h3>
+            <p>Árboles de decisión, bosques aleatorios, boosting y decisiones con costos. Datos: créditos de Alemania del Sur.</p>
+          </div>
+          <span class="estado">Próximamente</span>
+        </li>
+        <li class="pendiente">
+          <span class="numero-semana">5</span>
+          <div>
+            <h3>Validación y series de tiempo</h3>
+            <p>Validación cruzada, fuga de información temporal y pronóstico con rezagos. Datos: bicicletas compartidas.</p>
+          </div>
+          <span class="estado">Próximamente</span>
+        </li>
+        <li class="pendiente">
+          <span class="numero-semana">6</span>
+          <div>
+            <h3>Aprendizaje no supervisado</h3>
+            <p>Variables RFM, k-medias, número de grupos y DBSCAN. Datos: comercio minorista en línea.</p>
+          </div>
+          <span class="estado">Próximamente</span>
+        </li>
+        <li class="pendiente">
+          <span class="numero-semana">7</span>
+          <div>
+            <h3>Redes neuronales</h3>
+            <p>Neuronas, funciones de activación, entrenamiento y comparación con modelos clásicos. Datos: Fashion-MNIST.</p>
+          </div>
+          <span class="estado">Próximamente</span>
+        </li>
+        <li class="pendiente">
+          <span class="numero-semana">8</span>
+          <div>
+            <h3>Trabajo final</h3>
+            <p>Proyecto aplicado de principio a fin con datos elegidos por cada grupo.</p>
+          </div>
+          <span class="estado">Próximamente</span>
+        </li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<footer class="pie-sitio">
+  <div class="contenedor">Curso de Machine Learning · Especialización en Analítica de Datos · Dr. Oscar Loyola Valenzuela</div>
+</footer>
+
+<script src="assets/grafico.js"></script>
+<script src="assets/estadistica.js"></script>
+<script>
+(() => {
+  const g = new Grafico(document.getElementById("lienzoPortada"), {
+    xmin: 0, xmax: 10, ymin: 0, ymax: 10, ejeX: "x", ejeY: "y",
+    margen: { izq: 40, der: 12, sup: 10, inf: 38 },
+  });
+  const xs = [1.2, 2.0, 3.1, 4.0, 4.8, 6.1, 7.0, 8.2];
+  const ys = [2.1, 3.4, 3.0, 4.6, 5.1, 5.6, 7.2, 7.4];
+
+  g.dibujar = () => {
+    g.limpiar();
+    g.ejes();
+    const n = xs.length;
+    document.getElementById("nPortada").textContent = n;
+    const eq = document.getElementById("ecuacionPortada");
+    if (n >= 2) {
+      const { b0, b1 } = minimosCuadrados(xs, ys);
+      g.recortar(() => {
+        for (let i = 0; i < n; i++) g.segmento(xs[i], ys[i], xs[i], b0 + b1 * xs[i], { color: COLOR.ambar, ancho: 1.5, alfa: 0.7 });
+        g.funcion(x => b0 + b1 * x, { color: COLOR.teal, ancho: 3 });
+      });
+      const r2 = n > 2 ? metricas(ys, xs.map(x => b0 + b1 * x)).r2 : 1;
+      eq.textContent = `ŷ = ${fmt(b0)} ${b1 < 0 ? "−" : "+"} ${fmt(Math.abs(b1))}·x;  R² = ${fmt(r2)}`;
+    } else {
+      eq.textContent = "Agregue al menos dos puntos";
+    }
+    for (let i = 0; i < n; i++) g.punto(xs[i], ys[i], { r: 6, relleno: COLOR.tinta });
+  };
+
+  g.interaccion((x, y, e, px, py) => {
+    let i = g.cercano(px, py, xs, ys, 14);
+    if (i < 0) { xs.push(x); ys.push(y); i = xs.length - 1; }
+    g.dibujar();
+    return { mover: (x2, y2) => {
+      xs[i] = Math.min(Math.max(x2, 0), 10); ys[i] = Math.min(Math.max(y2, 0), 10); g.dibujar();
+    } };
+  });
+  document.getElementById("limpiarPortada").addEventListener("click", () => { xs.length = 0; ys.length = 0; g.dibujar(); });
+  g.dibujar();
+})();
+</script>
+</body>
+</html>

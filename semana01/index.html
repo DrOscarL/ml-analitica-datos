@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Semana 1 · Análisis exploratorio</title>
+<meta name="description" content="Simuladores de la semana 1: media, mediana y atípicos; formas de un histograma; correlación y paradoja de Simpson.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Instrument+Sans:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link rel="stylesheet" href="../assets/estilo.css">
+</head>
+<body>
+
+<header class="barra">
+  <div class="contenedor">
+    <a class="marca" href="../">Machine Learning <span>· Analítica de Datos</span></a>
+    <nav aria-label="Semanas disponibles">
+      <a href="./" aria-current="page">Semana 1</a>
+      <a href="../semana02/">Semana 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="encabezado-semana">
+    <div class="contenedor">
+      <p class="rotulo">Semana 1</p>
+      <h1>Fundamentos y análisis exploratorio</h1>
+      <p class="bajada">Antes de construir cualquier modelo hay que conocer los datos. Estos tres simuladores muestran por qué un solo número puede engañar, qué revela la forma de una distribución y cómo una relación puede invertirse al separar los grupos.</p>
+      <nav class="indice" aria-label="Contenido de la semana">
+        <strong>Simuladores</strong>
+        <ol>
+          <li><a href="#atipicos">Media, mediana y valores atípicos</a></li>
+          <li><a href="#histograma">Histogramas y formas de una distribución</a></li>
+          <li><a href="#simpson">Correlación y paradoja de Simpson</a></li>
+        </ol>
+      </nav>
+      <div class="material">
+        <a class="boton-colab" data-cuaderno="semana01/clase01_practica.ipynb" href="#">Abrir la práctica en Colab</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Simulador 1 ───────────────────────── -->
+  <section class="simulador" id="atipicos" aria-labelledby="t-atipicos">
+    <div class="contenedor">
+      <div class="concepto">
+        <p class="numero">Simulador 1</p>
+        <h2 id="t-atipicos">Media, mediana y valores atípicos</h2>
+        <p>La <strong>media</strong> reparte el total entre todas las observaciones; la <strong>mediana</strong> es el valor que deja la mitad de los datos a cada lado. Ante un valor extremo, la media se desplaza y la mediana casi no cambia.</p>
+        <p>Tukey propone considerar atípica toda observación fuera del intervalo</p>
+        <p>$$\big[\,Q_1 - 1{,}5\,\mathrm{RIC},\;\; Q_3 + 1{,}5\,\mathrm{RIC}\,\big]$$</p>
+        <p>donde \(\mathrm{RIC} = Q_3 - Q_1\).</p>
+        <table class="simbolos">
+          <thead><tr><th>Símbolo</th><th>Significado</th></tr></thead>
+          <tbody>
+            <tr><td>\(Q_1,\ Q_3\)</td><td>Primer y tercer cuartil: dejan el 25 % y el 75 % de los datos por debajo.</td></tr>
+            <tr><td>\(\mathrm{RIC}\)</td><td>Rango intercuartílico: ancho de la caja del diagrama.</td></tr>
+          </tbody>
+        </table>
+        <p>Ejemplo: salarios mensuales (millones de pesos) de doce empleados de una pequeña empresa. El último corresponde al gerente; usted decide cuánto gana.</p>
+        <div class="explorar">
+          <h3>Para explorar</h3>
+          <ol>
+            <li>¿A partir de qué salario del gerente la media supera a todos los demás salarios?</li>
+            <li>¿Cuánto cambia la mediana entre el mínimo y el máximo del control? ¿Por qué?</li>
+            <li>¿Qué medida reportaría como «salario típico» de la empresa? Justifique.</li>
+          </ol>
+        </div>
+      </div>
+
+      <figure class="panel" style="margin:0">
+        <canvas id="c-atipicos" aria-label="Diagrama de puntos y diagrama de caja de los salarios"></canvas>
+        <figcaption class="leyenda-figura"><strong>Figura 1.</strong> Arriba, cada salario como un punto; abajo, el diagrama de caja con los límites de Tukey (líneas grises discontinuas). Los puntos ámbar son atípicos.</figcaption>
+        <div class="controles">
+          <div class="control">
+            <label for="s-gerente"><span>Salario del gerente (millones)</span> <output for="s-gerente"></output></label>
+            <input type="range" id="s-gerente" min="1.5" max="20" step="0.1" value="9">
+          </div>
+          <div class="control">
+            <label for="s-extremos"><span>Empleados con salario alto</span> <output for="s-extremos"></output></label>
+            <input type="range" id="s-extremos" min="1" max="3" step="1" value="1">
+          </div>
+        </div>
+        <div class="lecturas" aria-live="polite">
+          <div class="lectura ambar"><span class="nombre">Media</span><span class="valor" id="l-media">—</span></div>
+          <div class="lectura teal"><span class="nombre">Mediana</span><span class="valor" id="l-mediana">—</span></div>
+          <div class="lectura"><span class="nombre">Desv. estándar</span><span class="valor" id="l-desv">—</span></div>
+          <div class="lectura"><span class="nombre">RIC</span><span class="valor" id="l-ric">—</span></div>
+          <div class="lectura violeta"><span class="nombre">Atípicos</span><span class="valor" id="l-atip">—</span></div>
+        </div>
+        <p class="nota-viva" id="n-atipicos"></p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Simulador 2 ───────────────────────── -->
+  <section class="simulador" id="histograma" aria-labelledby="t-histograma">
+    <div class="contenedor">
+      <div class="concepto">
+        <p class="numero">Simulador 2</p>
+        <h2 id="t-histograma">Histogramas y formas de una distribución</h2>
+        <p>Un <strong>histograma</strong> divide el rango de una variable en intervalos de igual ancho y cuenta cuántas observaciones caen en cada uno. Su forma resume la distribución:</p>
+        <ul>
+          <li><strong>Simétrica:</strong> media y mediana coinciden.</li>
+          <li><strong>Asimétrica a la derecha:</strong> una cola larga de valores altos arrastra la media por encima de la mediana.</li>
+          <li><strong>Bimodal:</strong> dos picos; suele indicar que se mezclan dos poblaciones.</li>
+        </ul>
+        <p>El número de intervalos \(k\) es una decisión del analista: con pocos se pierde la forma; con demasiados, el ruido parece estructura.</p>
+        <p>En la clase, la longitud de las aletas de los pingüinos mostró dos picos: los Gentoo tienen aletas más largas que Adelie y Chinstrap.</p>
+        <div class="explorar">
+          <h3>Para explorar</h3>
+          <ol>
+            <li>En la forma asimétrica, ¿cuál de las dos líneas verticales queda más cerca de la cola?</li>
+            <li>En la forma bimodal, ¿desde qué separación aparecen dos picos con 10 intervalos? ¿Y con 4?</li>
+            <li>Con las poblaciones muy separadas, ¿describe bien a los datos la media? Active el color por población antes de responder.</li>
+          </ol>
+        </div>
+      </div>
+
+      <figure class="panel" style="margin:0">
+        <canvas id="c-histograma" aria-label="Histograma con líneas de media y mediana"></canvas>
+        <figcaption class="leyenda-figura"><strong>Figura 2.</strong> Histograma de 300 observaciones simuladas. La línea ámbar marca la media; la verde azulada, la mediana.</figcaption>
+        <div class="controles">
+          <div class="control">
+            <label for="s-forma">Forma</label>
+            <select id="s-forma" style="width:100%;font:inherit;padding:6px;border:1px solid var(--linea);border-radius:6px;background:#fff">
+              <option value="sim">Simétrica</option>
+              <option value="asim">Asimétrica a la derecha</option>
+              <option value="bim" selected>Bimodal (dos poblaciones)</option>
+            </select>
+          </div>
+          <div class="control">
+            <label for="s-bins"><span>Número de intervalos \(k\)</span> <output for="s-bins"></output></label>
+            <input type="range" id="s-bins" min="3" max="50" step="1" value="12">
+          </div>
+          <div class="control">
+            <label for="s-sep"><span>Separación entre poblaciones</span> <output for="s-sep"></output></label>
+            <input type="range" id="s-sep" min="0" max="4" step="0.1" value="2.6">
+          </div>
+          <label class="casilla"><input type="checkbox" id="s-color"> Colorear por población</label>
+        </div>
+        <div class="lecturas" aria-live="polite">
+          <div class="lectura ambar"><span class="nombre">Media</span><span class="valor" id="h-media">—</span></div>
+          <div class="lectura teal"><span class="nombre">Mediana</span><span class="valor" id="h-mediana">—</span></div>
+          <div class="lectura"><span class="nombre">Media − mediana</span><span class="valor" id="h-dif">—</span></div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Simulador 3 ───────────────────────── -->
+  <section class="simulador" id="simpson" aria-labelledby="t-simpson">
+    <div class="contenedor">
+      <div class="concepto">
+        <p class="numero">Simulador 3</p>
+        <h2 id="t-simpson">Correlación y paradoja de Simpson</h2>
+        <p>El <strong>coeficiente de correlación de Pearson</strong> mide la intensidad de la relación <em>lineal</em> entre dos variables:</p>
+        <p>$$r = \frac{\sum_i (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_i (x_i - \bar{x})^2}\,\sqrt{\sum_i (y_i - \bar{y})^2}}$$</p>
+        <p>Su valor está siempre entre \(-1\) y \(1\).</p>
+        <table class="simbolos">
+          <thead><tr><th>Símbolo</th><th>Significado</th></tr></thead>
+          <tbody>
+            <tr><td>\(x_i,\ y_i\)</td><td>Valores de las dos variables en la observación \(i\).</td></tr>
+            <tr><td>\(\bar{x},\ \bar{y}\)</td><td>Medias de cada variable.</td></tr>
+            <tr><td>\(r\)</td><td>Positivo: crecen juntas. Negativo: una crece cuando la otra decrece.</td></tr>
+          </tbody>
+        </table>
+        <p>La <strong>paradoja de Simpson</strong> ocurre cuando la relación observada en los datos agregados se invierte, o desaparece, al analizar los grupos que los componen. En los pingüinos, longitud y profundidad del pico tenían \(r = -0{,}24\) en conjunto, pero entre 0,39 y 0,65 dentro de cada especie.</p>
+        <div class="explorar">
+          <h3>Para explorar</h3>
+          <ol>
+            <li>Con el color desactivado, ¿qué relación sugiere la nube de puntos?</li>
+            <li>¿Desde qué separación entre grupos cambia el signo de la correlación global?</li>
+            <li>Si los grupos fueran especies que nadie registró en la base de datos, ¿cómo podría sospechar su existencia?</li>
+          </ol>
+        </div>
+      </div>
+
+      <figure class="panel" style="margin:0">
+        <canvas id="c-simpson" aria-label="Diagrama de dispersión de tres grupos con sus rectas de regresión"></canvas>
+        <figcaption class="leyenda-figura"><strong>Figura 3.</strong> Tres grupos de 40 observaciones simuladas. La recta negra discontinua se ajusta a todos los datos; las de color, a cada grupo.</figcaption>
+        <div class="controles">
+          <div class="control">
+            <label for="s-desp"><span>Separación entre grupos</span> <output for="s-desp"></output></label>
+            <input type="range" id="s-desp" min="0" max="1" step="0.01" value="0.85">
+          </div>
+          <div class="control">
+            <label for="s-pend"><span>Pendiente dentro de cada grupo</span> <output for="s-pend"></output></label>
+            <input type="range" id="s-pend" min="-0.6" max="1.2" step="0.05" value="0.6">
+          </div>
+          <label class="casilla"><input type="checkbox" id="s-grupos"> Mostrar los grupos</label>
+        </div>
+        <div class="lecturas" aria-live="polite">
+          <div class="lectura"><span class="nombre">r global</span><span class="valor" id="r-global">—</span></div>
+          <div class="lectura teal"><span class="nombre">r grupo A</span><span class="valor" id="r-a">—</span></div>
+          <div class="lectura ambar"><span class="nombre">r grupo B</span><span class="valor" id="r-b">—</span></div>
+          <div class="lectura violeta"><span class="nombre">r grupo C</span><span class="valor" id="r-c">—</span></div>
+        </div>
+        <p class="nota-viva" id="n-simpson"></p>
+      </figure>
+    </div>
+  </section>
+
+  <section class="referencias" aria-labelledby="t-ref">
+    <div class="contenedor">
+      <h2 id="t-ref">Referencias</h2>
+      <ol>
+        <li>J. W. Tukey. <em>Exploratory Data Analysis</em>. Addison-Wesley, 1977.</li>
+        <li>E. H. Simpson. The interpretation of interaction in contingency tables. <em>Journal of the Royal Statistical Society, Series B</em>, 13(2):238–241, 1951.</li>
+        <li>S. A. Julious y M. A. Mullee. Confounding and Simpson's paradox. <em>BMJ</em>, 309(6967):1480–1481, 1994.</li>
+        <li>K. B. Gorman, T. D. Williams y W. R. Fraser. Ecological sexual dimorphism and environmental variability within a community of Antarctic penguins (genus <em>Pygoscelis</em>). <em>PLoS ONE</em>, 9(3):e90081, 2014.</li>
+        <li>A. Agresti. <em>An Introduction to Categorical Data Analysis</em>, 3.ª ed. Wiley, 2019.</li>
+      </ol>
+      <div class="navegacion-semanas">
+        <a href="../">Volver al inicio</a>
+        <a href="../semana02/">Semana 2: Regresión y generalización</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="pie-sitio">
+  <div class="contenedor">Curso de Machine Learning · Especialización en Analítica de Datos · Dr. Oscar Loyola Valenzuela</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script src="../assets/config.js"></script>
+<script src="../assets/grafico.js"></script>
+<script src="../assets/estadistica.js"></script>
+<script src="simuladores.js"></script>
+</body>
+</html>
